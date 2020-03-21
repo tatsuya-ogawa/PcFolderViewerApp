@@ -17,7 +17,7 @@
 		09D379E4242423490096DEC7 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D379E3242423490096DEC7 /* IconView.swift */; };
 		09D379E6242596300096DEC7 /* CommandManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D379E5242596300096DEC7 /* CommandManager.swift */; };
 		09D379E8242620470096DEC7 /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D379E7242620470096DEC7 /* DocumentView.swift */; };
-		09D379EA242623EC0096DEC7 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D379E9242623EC0096DEC7 /* FileManager.swift */; };
+		09D379EA242623EC0096DEC7 /* RemoteFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D379E9242623EC0096DEC7 /* RemoteFileManager.swift */; };
 		F7ECD7F972BFD335B6CBB454 /* Pods_UsbApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFEA23C5FCB0F4F04632896C /* Pods_UsbApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,7 +34,7 @@
 		09D379E3242423490096DEC7 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		09D379E5242596300096DEC7 /* CommandManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandManager.swift; sourceTree = "<group>"; };
 		09D379E7242620470096DEC7 /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
-		09D379E9242623EC0096DEC7 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
+		09D379E9242623EC0096DEC7 /* RemoteFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFileManager.swift; sourceTree = "<group>"; };
 		177807672F8E58509DF4E84A /* Pods-UsbApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UsbApp.debug.xcconfig"; path = "Target Support Files/Pods-UsbApp/Pods-UsbApp.debug.xcconfig"; sourceTree = "<group>"; };
 		9A00FE08F008855920BC93B4 /* Pods-UsbApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UsbApp.release.xcconfig"; path = "Target Support Files/Pods-UsbApp/Pods-UsbApp.release.xcconfig"; sourceTree = "<group>"; };
 		FFEA23C5FCB0F4F04632896C /* Pods_UsbApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UsbApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,7 +84,7 @@
 				09D379E3242423490096DEC7 /* IconView.swift */,
 				09D379E5242596300096DEC7 /* CommandManager.swift */,
 				09D379E7242620470096DEC7 /* DocumentView.swift */,
-				09D379E9242623EC0096DEC7 /* FileManager.swift */,
+				09D379E9242623EC0096DEC7 /* RemoteFileManager.swift */,
 			);
 			path = UsbApp;
 			sourceTree = "<group>";
@@ -218,7 +218,7 @@
 				09D379E8242620470096DEC7 /* DocumentView.swift in Sources */,
 				093323B62421290800A7A674 /* SceneDelegate.swift in Sources */,
 				093323B82421290800A7A674 /* ContentView.swift in Sources */,
-				09D379EA242623EC0096DEC7 /* FileManager.swift in Sources */,
+				09D379EA242623EC0096DEC7 /* RemoteFileManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

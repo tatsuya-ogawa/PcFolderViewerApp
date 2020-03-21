@@ -7,7 +7,7 @@
 //
 
 import Foundation
-class FileManager{
+class RemoteFileManager{
     let queue = DispatchQueue.init(label: "list")
     var viewModel : FileViewModel?
     var timer:Timer?
@@ -32,6 +32,7 @@ class FileManager{
             if let data = CommandManager.get(path){
                 let nsData = data as NSData
                 let saveUrl = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(path)
+                try? FileManager.default.createDirectory(at: saveUrl.deletingLastPathComponent() , withIntermediateDirectories: true, attributes: nil)
                 if nsData.write(to: saveUrl, atomically: true) {
                     url = saveUrl
                 }

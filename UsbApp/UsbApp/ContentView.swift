@@ -11,9 +11,9 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel:FileViewModel = FileViewModel()
-    let fileManager:FileManager
+    let fileManager:RemoteFileManager
     init() {
-        fileManager = FileManager()
+        fileManager = RemoteFileManager()
         fileManager.viewModel = self.viewModel
         UINavigationBar.appearance().backgroundColor = .lightGray
         fileManager.reload()
@@ -36,62 +36,83 @@ struct ContentView: View {
         viewModel.currentDirectory = currentDirectory
         fileManager.reload()
     }
-    @ObservedObject var documentViewModel:DocumentViewModel = DocumentViewModel()
-    @State var selectedFileInfo:FileInfo? = nil
+    func absolutePath(_ fileName:String)->String{
+        var path = viewModel.currentDirectory
+        if path.count == 0{
+            path = fileName
+        }else{
+            path = "\(viewModel.currentDirectory)/\(fileName)"
+        }
+        return path
+    }
+    func downloadFile(file:FileInfo){
+        let path = self.absolutePath(file.name)
+        DispatchQueue.global().async {
+            guard let url = self.fileManager.getFile(path) else{return}
+            DispatchQueue.main.async {
+                let documentViewController = UIDocumentInteractionController.init(url: url)
+                let viewController = UIApplication.shared.keyWindow!.rootViewController!
+                if !(
+                    documentViewController.presentOpenInMenu(from:
+                        viewController.view.frame, in: viewController.view, animated: true)) {
+                    print("failed to open url \(url)")
+                }
+            }
+        }
+    }
     var body: some View {
         NavigationView{
-            GeometryReader { geometry in
-                List{
+            List{
                 //VStack(alignment: .leading, spacing: 10) {
-                    ForEach(self.viewModel.fileList, id: \.self) { file in
+                ForEach(self.viewModel.fileList, id: \.self) { file in
+                    GeometryReader { geometry in
+                        
                         HStack(spacing: 10) {
                             if file.type == 0{
                                 Image(systemName: "folder")
                             }else{
                                 Image(systemName: "doc.text")
                             }
-                            if file.type == 0{
-                                Text("\(file.name)")
-                                    .onTapGesture {
-                                        self.downToFile(file: file)
-                                }
-                            }else{
-                                Text("\(file.name)")
-                                    .onTapGesture {
-                                        self.selectedFileInfo = file
-                                        self.documentViewModel.isPresented.toggle()
-                                }
-                            }
+                            
+                            Text("\(file.name)")
+                                                            
                             Spacer()
-                        }.padding(10)
-                    }
-                    Spacer()
-                //    }
-                
-            }.sheet(isPresented: self.$documentViewModel.isPresented) {
-                    DocumentView(path: self.selectedFileInfo!.name ,viewModel:self.viewModel, documentViewModel: self.documentViewModel)
-                }
-                    //.frame(width: geometry.size.width, height: geometry.size.height)
-                    .navigationBarItems(
-                        leading:
-                        Button(action: {
-                            self.uoToParent()
-                        }, label: {
-                            if !self.viewModel.isTop {
-                                Text("Up")
+                        }.padding(10).onTapGesture {
+                            if file.type == 0{
+                                self.downToFile(file: file)
+                            }else{
+                                self.downloadFile(file: file)
                             }
-                        }),
-                        trailing:
-                        HStack {
-                            Button(action: {
-                                self.reload()
-                            }) {
-                                Image(systemName: "folder")
-                            }.foregroundColor(.blue)
-                    })
-                    .navigationBarTitle(Text(self.viewModel.currentDirectoryText))
+                        }
+                        //.rotation3DEffect(.degrees( 60.0 * sin(Double(geometry.frame(in: .global).minY / 50.0 ))), axis: (x: 1, y: 0, z: 0))
+                        //.frame(width: geometry.size.width)
+                    }
+                }
+                
+                Spacer()
+                
             }
+                
+            .navigationBarItems(
+                leading:
+                Button(action: {
+                    self.uoToParent()
+                }, label: {
+                    if !self.viewModel.isTop {
+                        Text("Up")
+                    }
+                }),
+                trailing:
+                HStack {
+                    Button(action: {
+                        self.reload()
+                    }) {
+                        Image(systemName: "folder")
+                    }.foregroundColor(.blue)
+            })
+                .navigationBarTitle(Text(self.viewModel.currentDirectoryText))
         }
+        
     }
 }
 struct ContentView_Previews: PreviewProvider {

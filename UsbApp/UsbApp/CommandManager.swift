@@ -22,11 +22,11 @@ class Command{
     }
     static func list(_ directory:String)->Data{
         let data = directory.data(using: .utf8)!
-        return Command.common(data, type: .List)
+        return common(data, type: .List)
     }
     static func get(_ path:String)->Data{
         let data = path.data(using: .utf8)!
-        return Command.common(data, type: .Get)
+        return common(data, type: .Get)
     }
 }
 extension Array where Element == UInt8 {
@@ -39,20 +39,35 @@ extension Array where Element == UInt8 {
     }
 }
 class Result{
-    static func common(_ data:Data)->Data?{
+    static func getSize(_ data:Data)->Int{
         let buffer = [UInt8](data)
         let size:Int = Int(Array(buffer[1...4]).ToInt32())
+        return size
+    }
+    static func getPayload(_ data:Data)->Data?{
+        let buffer = [UInt8](data)
+        let size:Int = min( getSize(data) ,buffer.count - 5)
+        if size == 0 {
+            return nil
+        }
+        return Data(Array(buffer[5..<(size+5)]))
+    }
+    static func common(_ data:Data)->Data?{
+        let buffer = [UInt8](data)
+        let size:Int = getSize(data)
         if size == 0 {
             return nil
         }
         return Data(Array(buffer[5..<(size+5)]))
     }
     static func list(_ data:Data)->[FileInfo]?{
-        guard let ret = Result.common(data) else { return nil }
+        //guard let ret = common(data) else { return nil }
+        let ret = data
         return try? JSONDecoder().decode([FileInfo].self, from: ret)
     }
     static func get(_ data:Data)->Data?{
-        guard let ret = Result.common(data) else { return nil }
+        //guard let ret = common(data) else { return nil }
+        let ret = data
         return ret
     }
 }
@@ -72,16 +87,38 @@ struct FileInfo:Codable,Hashable{
 }
 
 class CommandManager{
-    
+    static func sendReceive(_ command:Data)->Data?{
+        guard let connection = NetworkServer.shared.connection else{
+            return nil
+        }
+        NetworkServer.shared.send(data: command, nwConnection: connection)
+        guard let ret = NetworkServer.shared.receive(nWConnection: connection) else {
+            return nil
+        }
+        let size = Result.getSize(ret)
+        var data = Result.getPayload(ret)
+        if data == nil {
+            return nil
+        }
+        while data!.count < size{
+            guard let rest = NetworkServer.shared.receive(nWConnection: connection) else {
+                break
+            }
+            let restSize = min(size - data!.count,rest.count)
+            let buffer = [UInt8](rest)
+            data?.append(Data(Array(buffer[0..<(restSize)])))
+        }
+        return data
+    }
     static func list(_ directory:String = "")->[FileInfo]?{
-        let data = NetworkServer.shared.sendReceive(data: Command.list(directory) )
+        let data = self.sendReceive(Command.list(directory) )
         guard let ret = data else {
             return nil
         }
         return Result.list(ret)
     }
     static func get(_ path:String = "")->Data?{
-        let data = NetworkServer.shared.sendReceive(data: Command.get(path) )
+        let data = self.sendReceive(Command.get(path) )
         guard let ret = data else {
             return nil
         }

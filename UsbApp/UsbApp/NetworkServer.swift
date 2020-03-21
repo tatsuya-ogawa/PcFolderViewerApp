@@ -48,13 +48,7 @@ class NetworkServer{
             print(error)
         }
     }
-    func sendReceive(data:Data)->Data?{
-        guard let connection = self.connection else{
-            return nil
-        }
-        self.send(data: data, nwConnection: connection)
-        return self.receive(nWConnection: connection)
-    }
+    
     func send(data:Data,nwConnection:NWConnection){
         let semaphore = DispatchSemaphore(value: 0)
         let completion = NWConnection.SendCompletion.contentProcessed { (error: NWError?) in
